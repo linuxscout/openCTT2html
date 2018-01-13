@@ -1,0 +1,34 @@
+#promo	id	name	short_name	type	cours	niveau	teacher
+M2-GSI	5011	Computational Intelligence 	CI-2GSI	cours	1	GSI	Saoud
+M2-GSI	5022	Computational Intelligence 	CI-2GSI	TD	1	GSI	Saoud
+M2-GSI	5031	Computational Intelligence 	CI-2GSI	TP	1	GSI	Saoud
+M2-GSI	5003	Concepts fondamentaux de l'informatique cognitive 	IC-2GSI	cours	1	GSI	ouahabi 
+M2-GSI	5016	Concepts fondamentaux de l'informatique cognitive 	IC-2GSI	TD	1	GSI	ouahabi 
+M2-GSI	5000	Gestion de l’Incertain 	GI-2GSI	cours	1	GSI	zerrouki
+M2-GSI	5015	Gestion de l’Incertain 	GI-2GSI	TD	1	GSI	zerrouki
+M2-GSI	5010	Les SoC (System On Chip)	Soc-2GSI	cours	1	GSI	chebi
+M2-GSI	5021	Les SoC (System On Chip)	Soc-2GSI	TD	1	GSI	chebi
+M2-GSI	5029	Les SoC (System On Chip)	Soc-2GSI	TP	1	GSI	chebi
+M2-GSI	5002	Réseaux Mobiles	RM-2GSI	cours	1	GSI	brahimi
+M2-GSI	5024	Réseaux Mobiles	RM-2GSI	TP	1	GSI	brahimi
+M2-GSI	5001	Systèmes embarqués 	SEMB-2GSI	cours	1	GSI	abbas A.
+M2-GSI	5030	Systèmes embarqués 	SEMB-2GSI	TP		GSI	chebi
+M2-GSI	5009	Validation formelle de Systèmes Informatiques 	VFSI-2GSI	cours	1	GSI	khaldoun ahmed
+M2-GSI	5020	Validation formelle de Systèmes Informatiques 	VFSI-2GSI	TD	1	GSI	khaldoun ahmed
+M2-ISIL	5013	 Droit des nouvelles des TIC	DTIC-2GSI	cours	1	ISIL	daass                                                    
+M2-ISIL	5007	Développement d’applications mobiles	Mob-M1ISIL	cours	1	ISIL	djoubri
+M2-ISIL	5018	Développement d’applications mobiles	Mob-M1ISIL	TD	1	ISIL	djoubri
+M2-ISIL	5028	Développement d’applications mobiles	Mob-M1ISIL	TP	1	ISIL	djoubri
+M2-ISIL	5005	Introduction aux ERP 	ERP-M1-ISIL	cours	1	ISIL	Badis
+M2-ISIL	5026	Introduction aux ERP 	ERP-M1-ISIL	TP	1	ISIL	Badis
+M2-ISIL	5008	Ontologie et sémantique web 	Onto-M1ISIL	cours	1	ISIL	aid
+M2-ISIL	5019	Ontologie et sémantique web 	Onto-M1ISIL	TD	1	ISIL	aid
+M2-ISIL	5006	Programmation pour le  Big data 	BigD-M1ISIL	cours	1	ISIL	mahfoud
+M2-ISIL	5027	Programmation pour le  Big data 	BigD-M1ISIL	TP	1	ISIL	mahfoud
+M2-ISIL	5012	Représentation des connaissances 	RC-M1ISIL	cours	1	ISIL	djerbi  
+M2-ISIL	5023	Représentation des connaissances 	RC-M1ISIL	TD	1	ISIL	djerbi  
+M2-ISIL	5014	Systèmes d’Information Coopératifs 		cours	1	ISIL	Ramdani
+M2-ISIL	5032	Systèmes d’Information Coopératifs 	SICO-M1ISIL	TP	1	ISIL	Ramdani
+M2-ISIL	5004	Systèmes décisionnels et entrepôt de données	SDED-M1ISIL	cours	1	ISIL	Badis
+M2-ISIL	5017	Systèmes décisionnels et entrepôt de données	SDED-M1ISIL	TD	1	ISIL	Badis
+M2-ISIL	5025	Systèmes décisionnels et entrepôt de données	SDED-M1ISIL	TP	1	ISIL	Badis
