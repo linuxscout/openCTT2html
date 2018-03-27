@@ -161,6 +161,7 @@ def read_teachers(xmldoc):
              "last_name": teacher.getElementsByTagName('last_name')[0].firstChild.data,
              "title": teacher.getElementsByTagName('title')[0].firstChild.data,
              "edu_rank": teacher.getElementsByTagName('edu_rank')[0].firstChild.data,
+             "extid": teacher.getElementsByTagName('extid')[0].firstChild.data,
              "TD":0, "COURS":0, "TP":0,
             "timetable":copy.deepcopy(TIMETABLE_TEMPLATE) 
 
@@ -213,17 +214,18 @@ def read_slots(xmldoc, courses, teachers, classrooms, groups):
         courses[course_id]['timetable'][term_index][day_index] = aslot
     return teachers, classrooms, groups, courses
     
-def display_courses_teachers(courses, teachers):
+def display_courses_teachers(courses, teachers, teacher_dept = False):
     html = """<h2> Courses Assignation </h2>"""
     html += """<table border='1' class="timetable">"""
 
     for key, course in courses.iteritems():
         #~ course = courses[key]
         # get teacher info
-        html += "<tr><td>"
-        tech = teachers[course['teacher_id']]['name'] + " " + teachers[course['teacher_id']]['last_name']
-        html += u"</td><td>".join([ course['group_name'], tech, course['course_type'],course['name']  ])
-        html += "</td></tr>"
+        if not teacher_dept or teachers[course['teacher_id']]['extid'] == teacher_dept:
+            html += "<tr><td>"
+            tech = teachers[course['teacher_id']]['name'] + " " + teachers[course['teacher_id']]['last_name']
+            html += u"</td><td>".join([ course['group_name'], tech, course['course_type'],course['name']  ])
+            html += "</td></tr>"
     html += "</table>"
     return html
         
@@ -259,25 +261,26 @@ def calcul_charge_teachers(courses, teachers):
             teachers[tid]['vacation'] = teachers[tid]['charge'] - 9 
     return teachers
     
-def display_charge_teachers(teachers):
+def display_charge_teachers(teachers, teacher_dept=False):
     """ display charge by teacher"""
     text_permannant = "\n<h2>TEACHERS' Charge</h2>"
     text_permannant += "\n"+u"\t".join(['Nom',u'séance','Charge', 'Vacation','COURS','TD', "TP"])
     
 
     for tid in teachers:
-        text_permannant +="\n" + u"\t".join([teachers[tid]['name'], 
-        teachers[tid]['edu_rank'],
-        teachers[tid]['last_name'],
-        str(teachers[tid]['seance']),
-        str(teachers[tid]['charge']),
-        str(teachers[tid]['vacation']),
-        str(teachers[tid]['COURS']), 
-        str(teachers[tid]['TD']),
-        unicode(teachers[tid]['TP']),
-        ])
+        if not teacher_dept or teachers[tid]['extid'] == teacher_dept:
+            text_permannant +="\n" + u"\t".join([teachers[tid]['name'], 
+            teachers[tid]['edu_rank'],
+            teachers[tid]['last_name'],
+            str(teachers[tid]['seance']),
+            str(teachers[tid]['charge']),
+            str(teachers[tid]['vacation']),
+            str(teachers[tid]['COURS']), 
+            str(teachers[tid]['TD']),
+            unicode(teachers[tid]['TP']),
+            ])
     return text_permannant
-def display_charge_teachers_html(teachers):
+def display_charge_teachers_html(teachers, teacher_dept=False):
     """ display charge by teacher"""
     text = u"""\n"\n<h2>TEACHERS' Charge</h2>"
     <table border='1'>
@@ -292,27 +295,29 @@ def display_charge_teachers_html(teachers):
     <th>Séances</th>
     </thead>"""
     for tid in teachers:
-        text += u"""
-        <tr>
-        <td>%s</td> 
-        <td>%s</td>        
-        <td>%.3f</td> 
-        <td>%.3f</td>
-        <td>%.0f</td>
-        <td>%d</td>
-        <td>%d</td>
-        <td>%.0f</td>
-        </tr>
-        """%(
-        teachers[tid]["edu_rank"],
-        teachers[tid]["name"] +" " + teachers[tid]["last_name"] ,
-        teachers[tid]["charge"],
-        teachers[tid]["vacation"],
-        teachers[tid]["COURS"],
-        teachers[tid]["TD"],
-        teachers[tid]["TP"],
-        teachers[tid]["seance"],        
-        )
+        if not teacher_dept or teachers[tid]['extid'] == teacher_dept:
+
+            text += u"""
+            <tr>
+            <td>%s</td> 
+            <td>%s</td>        
+            <td>%.3f</td> 
+            <td>%.3f</td>
+            <td>%.0f</td>
+            <td>%d</td>
+            <td>%d</td>
+            <td>%.0f</td>
+            </tr>
+            """%(
+            teachers[tid]["edu_rank"],
+            teachers[tid]["name"] +" " + teachers[tid]["last_name"] ,
+            teachers[tid]["charge"],
+            teachers[tid]["vacation"],
+            teachers[tid]["COURS"],
+            teachers[tid]["TD"],
+            teachers[tid]["TP"],
+            teachers[tid]["seance"],        
+            )
     text += u"""\n</table>"""
     return text            
 
@@ -457,7 +462,7 @@ def display_free_classroom(classrooms):
     return text; 
 
     
-def display_availaible_teachers(teachers, detailled=False, teacher_type=False, course_type=False):
+def display_availaible_teachers(teachers, detailled=False, teacher_type=False, course_type=False, teacher_dept=False):
     """
     display available teachers
     """
@@ -478,22 +483,23 @@ def display_availaible_teachers(teachers, detailled=False, teacher_type=False, c
 
     for tid in teachers:
         if not teacher_type or teachers[tid]["edu_rank"].upper() ==  teacher_type:
-            time_table = teachers[tid]["timetable"]
-            for term in ("1","2","3","4","5","6"):
-                for day in ("1","2","3","4","5","6"):
-                    aslot = time_table[term][day]
-                    if aslot:
-                        if not course_type or  aslot['course_type'].upper() == course_type:
-                            if detailled:
-                                teacher_name = u" ".join([aslot['teacher_name'], 
-                                    aslot['course_name'],
-                                    aslot['course_type'],
-                                    aslot['group_name'],
-                                    aslot['classroom_name'],
-                                     ] )
-                            else:
-                                teacher_name = aslot['teacher_name']
-                            present_time_table[term][day].append(teacher_name)
+            if not teacher_dept or teachers[tid]["extid"] ==  teacher_dept:
+                time_table = teachers[tid]["timetable"]
+                for term in ("1","2","3","4","5","6"):
+                    for day in ("1","2","3","4","5","6"):
+                        aslot = time_table[term][day]
+                        if aslot:
+                            if not course_type or  aslot['course_type'].upper() == course_type:
+                                if detailled:
+                                    teacher_name = u" ".join([aslot['teacher_name'], 
+                                        aslot['course_name'],
+                                        aslot['course_type'],
+                                        aslot['group_name'],
+                                        aslot['classroom_name'],
+                                         ] )
+                                else:
+                                    teacher_name = aslot['teacher_name']
+                                present_time_table[term][day].append(teacher_name)
     text += display_freetimetable(present_time_table)       
     return text;
 
@@ -577,46 +583,79 @@ td{
 </head>
 <body>
 """
+    
     print html.encode('utf8')
 
+    print "<h1><a name='sommaire'>Sommaire</a> </h2>"
+    print "<ul>"
+    print "<li><a href='#%s'>%s</a></li>"%("groups", "Par groupe")
+    print "<li><a href='#%s'>%s</a></li>"%("teachers", "Par Enseignant")
+    print "<li><a href='#%s'>%s</a></li>"%("classrooms", "Salles")
+    print "<li><a href='#%s'>%s</a></li>"%("freerooms", "Salles Libres")
+    print "<li><a href='#%s'>%s</a></li>"%("availableteachers", "Enseignants Disponibles")
+    print "<li><a href='#%s'>%s</a></li>"%("charges", "Charges")
+    print "<li><a href='#%s'>%s</a></li>"%("affectation", "Affectation")
+    print "</ul>"
+    print "<br/><a name='groups'>Groups</a>"
     html = display_slot_by_group(groups)
     print html.encode('utf8')
-    html = display_slot_by_teacher( teachers)
-    print html.encode('utf8')
+    print "<br/><a href='#sommaire'>TOP</a>"
     
+    
+    print "<br/><a name='teachers'></a>"
+    html = display_slot_by_teacher(teachers)
+    print html.encode('utf8')
+    print "<br/><a href='#sommaire'>TOP</a>"
+    
+    print "<br/><a name='classrooms'></a>"
     html = display_slot_by_classroom(classrooms)
     print html.encode('utf8')
+    print "<br/><a href='#sommaire'>TOP</a>"
     
+    print "<br/><a name='freerooms'></a>"
     html = display_free_classroom(classrooms)
     print html.encode('utf8')
+    print "<br/><a href='#sommaire'>TOP</a>"    
     
     #~ html = display_global_courses(courses)
     #~ print html.encode('utf8')
     
-    html = display_availaible_teachers(teachers)
+        
+    print "<br/><a name='availableteachers'></a>"
+    html = display_availaible_teachers(teachers,teacher_dept="info")
     print html.encode('utf8')
+    print "<br/><a href='#sommaire'>TOP</a>"    
     
-    html = display_availaible_teachers(teachers,teacher_type ="vac")
+    html = display_availaible_teachers(teachers,teacher_type ="vac",teacher_dept="info")
     print html.encode('utf8')
+    print "<br/><a href='#sommaire'>TOP</a>"    
     
-    html = display_availaible_teachers(teachers, detailled =True)
+    html = display_availaible_teachers(teachers, detailled =True,teacher_dept="info")
     print html.encode('utf8')
+    print "<br/><a href='#sommaire'>TOP</a>"    
     
-    html = display_availaible_teachers(teachers, course_type ="TP", detailled =True)
+    html = display_availaible_teachers(teachers,teacher_dept="info", course_type ="TP", detailled =True)
     print html.encode('utf8')
+    print "<br/><a href='#sommaire'>TOP</a>"    
     
-    html = display_availaible_teachers(teachers, course_type ="COURS", detailled =True)
+    html = display_availaible_teachers(teachers,teacher_dept="info", course_type ="COURS", detailled =True)
     print html.encode('utf8')
+    print "<br/><a href='#sommaire'>TOP</a>"   
     
-    html = display_charge_teachers_html (teachers)
+    print "<br/><a name='charges'></a>" 
+    html = display_charge_teachers_html(teachers, teacher_dept ="info")
     print html.encode('utf8')
+    print "<br/><a href='#sommaire'>TOP</a>"    
 
-    html = display_charge_teachers (teachers)
-    
+    html = display_charge_teachers (teachers, teacher_dept ="info")
     print html.encode('utf8')
-    html = display_courses_teachers (courses, teachers)
+    print "<br/><a href='#sommaire'>TOP</a>"    
     
+    print "<br/><a name='affectation'></a>" 
+    html = display_courses_teachers (courses, teachers, teacher_dept ="info")
     print html.encode('utf8')
+    print "<br/><a href='#sommaire'>TOP</a>"
+
     print "</body></html>"
     
     
