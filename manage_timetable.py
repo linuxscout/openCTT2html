@@ -114,10 +114,11 @@ def main():
     table_course['extid'] = ""
     table_course['allowed_classrooms'] = ""
     # test add course 
-    xmldoc = tm.add_course(xmldoc, table_course, given_group_name)
+    parser = tm.openclassModel(filename)
+    xmldoc = parser.add_course(table_course, given_group_name)
     # test add courses
     #print xmldoc.toxml().encode('utf8')
-    tm.display_html(xmldoc)
+    parser.display_html()
 
 
 if __name__ == '__main__':
