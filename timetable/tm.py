@@ -321,7 +321,7 @@ def display_charge_teachers_html(teachers, teacher_dept=False):
     text += u"""\n</table>"""
     return text            
 
-def display_timetable(time_table, field1, field2):
+def display_timetable(time_table, field1, field2, occupation=False):
     """
     display a time table
     fields to display
@@ -338,17 +338,20 @@ def display_timetable(time_table, field1, field2):
         text += "\n<tr><td>%s</td>"%TERMS[term]
         for day in ("1","2","3","4","5","6"):
             if time_table[term][day]:
-                text += """<td class='%s'> 
-                <span class='course' alt='%s'>%s - %s</span>/
-                <span class='%s'>%s </span>@
-                <span class='%s'>%s </span>
-                </td>"""%(time_table[term][day].get("course_type",""),
-                        time_table[term][day].get("course_name",""),                
-                        time_table[term][day].get("short_name",""),                
-                        time_table[term][day].get("course_type",""),                
-                field1, time_table[term][day].get(field1,""),
-                field2, time_table[term][day].get(field2,""),
-                )
+                if occupation:
+                    text += """<td class='occuped'>MI</td>"""
+                else:
+                    text += """<td class='%s'> 
+                    <span class='course' alt='%s'>%s - %s</span>/
+                    <span class='%s'>%s </span>@
+                    <span class='%s'>%s </span>
+                    </td>"""%(time_table[term][day].get("course_type",""),
+                            time_table[term][day].get("course_name",""),                
+                            time_table[term][day].get("short_name",""),                
+                            time_table[term][day].get("course_type",""),                
+                    field1, time_table[term][day].get(field1,""),
+                    field2, time_table[term][day].get(field2,""),
+                    )
             else:
                 text += """<td/>""" 
         text += "</tr>"
@@ -431,7 +434,7 @@ def display_slot_by_teacher(teachers):
         text += display_timetable(time_table,"group_name", "classroom_name")
     return text;    
     
-def display_slot_by_classroom(classrooms):
+def display_slot_by_classroom(classrooms, occupation=False):
     """
     display slots by classroom
     """
@@ -440,7 +443,7 @@ def display_slot_by_classroom(classrooms):
     for tid in classrooms:
         text += "\n<h2>%s</h2>"%classrooms[tid]["name"]
         time_table = classrooms[tid]["timetable"]
-        text += display_timetable(time_table,"group_name", "teacher_name")       
+        text += display_timetable(time_table,"group_name", "teacher_name", occupation)       
     return text;
     
  
@@ -608,6 +611,7 @@ td{
     print "<br/><a href='#sommaire'>TOP</a>"
     
     print "<br/><a name='classrooms'></a>"
+    #~ html = display_slot_by_classroom(classrooms, occupation=True)
     html = display_slot_by_classroom(classrooms)
     print html.encode('utf8')
     print "<br/><a href='#sommaire'>TOP</a>"
@@ -647,9 +651,9 @@ td{
     print html.encode('utf8')
     print "<br/><a href='#sommaire'>TOP</a>"    
 
-    html = display_charge_teachers (teachers, teacher_dept ="info")
-    print html.encode('utf8')
-    print "<br/><a href='#sommaire'>TOP</a>"    
+    #~ html = display_charge_teachers (teachers, teacher_dept ="info")
+    #~ print html.encode('utf8')
+    #~ print "<br/><a href='#sommaire'>TOP</a>"    
     
     print "<br/><a name='affectation'></a>" 
     html = display_courses_teachers (courses, teachers, teacher_dept ="info")
