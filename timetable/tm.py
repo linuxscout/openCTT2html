@@ -500,7 +500,7 @@ class openclassModel:
             text += self.display_timetable(time_table,"group_name", "teacher_name", occupation)       
         return text;
         
-    def display_free_classroom(self, class_type = "", occupation=False):
+    def display_free_classroom(self, class_type = "", occupation=False, classrooms_to_control = []):
         """
         display free classroom
         """
@@ -516,7 +516,7 @@ class openclassModel:
                     for day in ("1","2","3","4","5","6"):
                         if not time_table[term][day]:
                             freetime_table[term][day].append(classrooms[tid]["name"])
-                        elif occupation: # display occupation of rooms to allow changement
+                        elif occupation and classrooms[tid]["name"] in classrooms_to_control : # display occupation of rooms to allow changement
                             freetime_table[term][day].append(classrooms[tid]["name"] + " [X]")
         text += self.display_freetimetable(freetime_table)       
         return text; 
@@ -761,7 +761,14 @@ class html_displayer(openclassModel):
         print "<br/><a name='freerooms'></a>"
         html = self.display_free_classroom("salle")
         print "<br/><a name='freerooms'></a>"
-        html = self.display_free_classroom("salle",occupation = True)
+        rooms_to_control = [
+            "Salle 36",
+            "Salle-p 41",
+    "Salle-p 43",
+    "Salle-p 46",
+    "Salle-p 47*",
+        ]
+        html = self.display_free_classroom("salle",occupation = True, classrooms_to_control = rooms_to_control )
         print html.encode('utf8')
         print "<br/><a href='#sommaire'>TOP</a>"    
         
