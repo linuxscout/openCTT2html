@@ -114,7 +114,7 @@ def main():
     table_course['extid'] = ""
     table_course['allowed_classrooms'] = ""
     # test add course 
-    parser = tm.openclassModel(filename)
+    parser = tm.html_displayer(filename)
     xmldoc = parser.add_course(table_course, given_group_name)
     # test add courses
     #print xmldoc.toxml().encode('utf8')

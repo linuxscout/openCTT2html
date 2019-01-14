@@ -8,6 +8,7 @@
 import xml.dom.minidom as minidom
 import sys
 import copy
+import os.path
 
 TERMS= {
 "1":"08:00 - 09:30",
@@ -167,21 +168,30 @@ class openclassModel:
         classrooms_table ={}
         # display personne by personne
         for classroom  in classrooms:
-            classrooms_table[classroom.getAttribute('id')]= {'name':classroom.getElementsByTagName('name')[0].firstChild.data,
+            cid = classroom.getAttribute('id')
+            cname = classroom.getElementsByTagName('name')[0].firstChild.data
+            classrooms_table[cid]= {'name':cname,
                 "timetable":copy.deepcopy(TIMETABLE_TEMPLATE)
             }
+            # add type to classes
+            if "tp" in cname.lower():
+                classrooms_table[cid]['type'] = "tp"
+            elif "amphi" in cname.lower():
+                classrooms_table[cid]['type'] = "amphi"
+            else:
+                classrooms_table[cid]['type'] = "salle"
             #un allowed slot
             spec_type= classroom.getElementsByTagName('spec_slots')[0].getAttribute("type")
             if spec_type.lower() == "allowed":
-                classrooms_table[classroom.getAttribute('id')]["timetable"] = copy.deepcopy(TIMETABLE_TEMPLATE_FORBIDDEN)
+                classrooms_table[cid]["timetable"] = copy.deepcopy(TIMETABLE_TEMPLATE_FORBIDDEN)
             slots = classroom.getElementsByTagName('spec_slot')
             for slot in slots:
                 term_index = slot.getElementsByTagName('term_index')[0].firstChild.data
                 day_index = slot.getElementsByTagName('day_index')[0].firstChild.data
                 if spec_type.lower() == "unallowed":             
-                    classrooms_table[classroom.getAttribute('id')]["timetable"][term_index][day_index] = {"course_type":"unvailable"}
+                    classrooms_table[cid]["timetable"][term_index][day_index] = {"course_type":"unvailable"}
                 else:
-                    classrooms_table[classroom.getAttribute('id')]["timetable"][term_index][day_index] = {}
+                    classrooms_table[cid]["timetable"][term_index][day_index] = {}
 
          
         self.classrooms =  classrooms_table
@@ -327,17 +337,7 @@ class openclassModel:
         
         return self.display_table(header, table)
 
-    def display_table(self, header, table):
-        """
-        """
-        #~ thead = table[0]
-        html = """<h2> %s </h2>"""%header
-        html += """<table border='1' class='timetable'>"""
-        for item in table:
-            html += u"<tr><td>" + u"</td><td>".join(item) + "</td></tr>"
-        html += "</table>"
-        
-        return html
+
         
 
     def add_course(self, table_course,  given_group_name):
@@ -391,7 +391,7 @@ class openclassModel:
     def display_charge_teachers(self, teacher_dept=False):
         """ display charge by teacher"""
         teachers = self.teachers
-        text_permannant = "\n<h2>TEACHERS' Charge</h2>"
+        text_permannant = self.display_header(">TEACHERS' Charge",2)
         text_permannant += "\n"+u"\t".join(['Nom',u'séance','Charge', 'Vacation','COURS','TD', "TP"])
         
 
@@ -409,106 +409,6 @@ class openclassModel:
                 ])
         return text_permannant
         
-    def display_charge_teachers_html(self, teacher_dept=False):
-        """ display charge by teacher"""
-        text = u"""\n"\n<h2>TEACHERS' Charge</h2>"
-        <table border='1'>
-        <thead>
-        <th>Type</th> 
-        <th>Nom</th> 
-        <th>Charge</th> 
-        <th>Vacation</th>
-        <th>Cours</th>
-        <th>TD</th>
-        <th>TP</th>
-        <th>Séances</th>
-        </thead>"""
-        for tid in self.teachers:
-            if not teacher_dept or self.teachers[tid]['extid'] == teacher_dept:
-
-                text += u"""
-                <tr>
-                <td>%s</td> 
-                <td>%s</td>        
-                <td>%.3f</td> 
-                <td>%.3f</td>
-                <td>%.0f</td>
-                <td>%d</td>
-                <td>%d</td>
-                <td>%.0f</td>
-                </tr>
-                """%(
-                self.teachers[tid]["edu_rank"],
-                self.teachers[tid]["name"] +" " + self.teachers[tid]["last_name"] ,
-                self.teachers[tid]["charge"],
-                self.teachers[tid]["vacation"],
-                self.teachers[tid]["COURS"],
-                self.teachers[tid]["TD"],
-                self.teachers[tid]["TP"],
-                self.teachers[tid]["seance"],        
-                )
-        text += u"""\n</table>"""
-        return text            
-
-    def display_timetable(self, time_table, field1, field2, occupation=False):
-        """
-        display a time table
-        fields to display
-        """
-        text = ""
-        text+= """\n<table border='1' class="timetable">"""
-        text+= "\n<thead>"
-        text+= "<th class='term'>Horaire</th>"
-        for d in("1","2","3","4","5","6"):
-            text+= "<th class='day'>%s</th>"%DAYS[d]
-        text+= "</thead>"
-
-        for term in ("1","2","3","4","5","6"):
-            text += "\n<tr><td>%s</td>"%TERMS[term]
-            for day in ("1","2","3","4","5","6"):
-                if time_table[term][day]:
-                    if occupation:
-                        text += """<td class='occuped'>MI</td>"""
-                    else:
-                        text += """<td class='%s'> 
-                        <span class='course' alt='%s'>%s - %s</span>/
-                        <span class='%s'>%s </span>@
-                        <span class='%s'>%s </span>
-                        </td>"""%(time_table[term][day].get("course_type",""),
-                                time_table[term][day].get("course_name",""),                
-                                time_table[term][day].get("short_name",""),                
-                                time_table[term][day].get("course_type",""),                
-                        field1, time_table[term][day].get(field1,""),
-                        field2, time_table[term][day].get(field2,""),
-                        )
-                else:
-                    text += """<td/>""" 
-            text += "</tr>"
-        text += "\n</table>"
-        return text;  
-    def display_freetimetable(self, time_table):
-        """
-        display a time table
-        fields to display
-        """
-        text = ""
-        text+= "\n<table border='1' class='timetable'>"
-        text+= "\n<thead>"
-        text+= "<th>Horaire</th>"
-        for d in("1","2","3","4","5","6"):
-            text+= "<th>%s</th>"%DAYS[d]
-        text+= "</thead>"
-
-        for term in ("1","2","3","4","5","6"):
-            text += "\n<tr><td>%s</td>"%TERMS[term]
-            for day in ("1","2","3","4","5","6"):
-                text += """<td class='freerooms'><ul>"""
-                for fr  in sorted(time_table[term][day]):
-                    text += "<li>%s</li>"%fr 
-                text += """</ul></td>"""
-            text += "</tr>"
-        text += "\n</table>"
-        return text;
 
 
       
@@ -532,13 +432,14 @@ class openclassModel:
 
         text = """"""
         for tid in teachers:
-            text += self.display_header("%s. %s %s (%s)"%(teachers[tid]["title"], teachers[tid]["name"],
-             teachers[tid]["last_name"], teachers[tid]["edu_rank"]), 2)
-            # display charge
-            text+= self.display_charge(teachers[tid])
-            time_table = teachers[tid]['timetable']
+            if teachers[tid]['charge'] > 0:
+                text += self.display_header("%s. %s %s (%s)"%(teachers[tid]["title"], teachers[tid]["name"],
+                 teachers[tid]["last_name"], teachers[tid]["edu_rank"]), 2)
+                # display charge
+                text+= self.display_charge(teachers[tid])
+                time_table = teachers[tid]['timetable']
 
-            text += self.display_timetable(time_table,"group_name", "classroom_name")
+                text += self.display_timetable(time_table,"group_name", "classroom_name")
         return text;    
     
 
@@ -599,7 +500,102 @@ class openclassModel:
             text += self.display_timetable(time_table,"group_name", "teacher_name", occupation)       
         return text;
         
+    def display_free_classroom(self, class_type = "", occupation=False):
+        """
+        display free classroom
+        """
+        classrooms = self.classrooms    
+        freetime_table = copy.deepcopy(FREETIMETABLE_TEMPLATE)
+        text = self.display_header("FREE CLASSROOMS %s"%class_type,2)
+        #~ if class_type:
+            #~ classrooms = [classrooms[c]  for c in classrooms if class_type in classrooms[c]["name"].lower()]
+        for tid in classrooms:
+            if not class_type  or class_type.lower()  ==  classrooms[tid]["type"].lower():
+                time_table = classrooms[tid]["timetable"]
+                for term in ("1","2","3","4","5","6"):
+                    for day in ("1","2","3","4","5","6"):
+                        if not time_table[term][day]:
+                            freetime_table[term][day].append(classrooms[tid]["name"])
+                        elif occupation: # display occupation of rooms to allow changement
+                            freetime_table[term][day].append(classrooms[tid]["name"] + " [X]")
+        text += self.display_freetimetable(freetime_table)       
+        return text; 
+    def display_freetimetable(self, time_table):
+        pass
+    def display_charge(self, time_table):
+        pass
+    def display_header(self, header_level = 1):
+        pass
+    def display_table(self, header, table):
+        pass
+    def display_timetable(self, time_table, field1, field2, occupation=False):
+        pass
+    
+class html_displayer(openclassModel):
+    def __init__(self, filename = None ):
+        openclassModel.__init__(self, filename)
+    def display_timetable(self, time_table, field1, field2, occupation=False):
+        """
+        display a time table
+        fields to display
+        """
+        text = ""
+        text+= """\n<table border='1' class="timetable">"""
+        text+= "\n<thead>"
+        text+= "<th class='term'>Horaire</th>"
+        for d in("1","2","3","4","5","6"):
+            text+= "<th class='day'>%s</th>"%DAYS[d]
+        text+= "</thead>"
+
+        for term in ("1","2","3","4","5","6"):
+            text += "\n<tr><td>%s</td>"%TERMS[term]
+            for day in ("1","2","3","4","5","6"):
+                if time_table[term][day]:
+                    if occupation:
+                        text += """<td class='occuped'>MI</td>"""
+                    else:
+                        text += """<td class='%s'> 
+                        <span class='course' alt='%s'>%s - %s</span>/
+                        <span class='%s'>%s </span>@
+                        <span class='%s'>%s </span>
+                        </td>"""%(time_table[term][day].get("course_type",""),
+                                time_table[term][day].get("course_name",""),                
+                                time_table[term][day].get("short_name",""),                
+                                time_table[term][day].get("course_type",""),                
+                        field1, time_table[term][day].get(field1,""),
+                        field2, time_table[term][day].get(field2,""),
+                        )
+                else:
+                    text += """<td/>""" 
+            text += "</tr>"
+        text += "\n</table>"
+        return text;          
         
+    def display_freetimetable(self, time_table):
+        """
+        display a time table
+        fields to display
+        """
+        text = ""
+        text+= "\n<table border='1' class='timetable'>"
+        text+= "\n<thead>"
+        text+= "<th>Horaire</th>"
+        for d in("1","2","3","4","5","6"):
+            text+= "<th>%s</th>"%DAYS[d]
+        text+= "</thead>"
+
+        for term in ("1","2","3","4","5","6"):
+            text += "\n<tr><td>%s</td>"%TERMS[term]
+            for day in ("1","2","3","4","5","6"):
+                text += """<td class='freerooms'><ul>"""
+                for fr  in sorted(time_table[term][day]):
+                    text += "<li>%s</li>"%fr 
+                text += """</ul></td>"""
+            text += "</tr>"
+        text += "\n</table>"
+        return text;
+
+                
     def display_charge(self, teacher):
         text= u"""\n<table border='1'>
 <tr>
@@ -637,24 +633,59 @@ class openclassModel:
             tag = "h3"
         return "\n<header><%s>%s</%s></header>"%(tag, header, tag)
 
-    def display_free_classroom(self):
+    def display_table(self, header, table):
         """
-        display free classroom
         """
-        classrooms = self.classrooms    
-        freetime_table = copy.deepcopy(FREETIMETABLE_TEMPLATE)
-        text = self.display_header("FREE CLASSROOMS",2)
+        #~ thead = table[0]
+        html = """<h2> %s </h2>"""%header
+        html += """<table border='1' class='timetable'>"""
+        for item in table:
+            html += u"<tr><td>" + u"</td><td>".join(item) + "</td></tr>"
+        html += "</table>"
+        
+        return html
+    def display_charge_teachers_html(self, teacher_dept=False):
+        """ display charge by teacher"""
+        text = u"""\n"\n<h2>TEACHERS' Charge</h2>"
+        <table border='1'>
+        <thead>
+        <th>Type</th> 
+        <th>Nom</th> 
+        <th>Charge</th> 
+        <th>Vacation</th>
+        <th>Cours</th>
+        <th>TD</th>
+        <th>TP</th>
+        <th>Séances</th>
+        </thead>"""
+        for tid in self.teachers:
+            if not teacher_dept or self.teachers[tid]['extid'] == teacher_dept:
 
-        for tid in classrooms:
-            time_table = classrooms[tid]["timetable"]
-            for term in ("1","2","3","4","5","6"):
-                for day in ("1","2","3","4","5","6"):
-                    if not time_table[term][day]:
-                        freetime_table[term][day].append(classrooms[tid]["name"])
-        text += self.display_freetimetable(freetime_table)       
-        return text; 
+                text += u"""
+                <tr>
+                <td>%s</td> 
+                <td>%s</td>        
+                <td>%.3f</td> 
+                <td>%.3f</td>
+                <td>%.0f</td>
+                <td>%d</td>
+                <td>%d</td>
+                <td>%.0f</td>
+                </tr>
+                """%(
+                self.teachers[tid]["edu_rank"],
+                self.teachers[tid]["name"] +" " + self.teachers[tid]["last_name"] ,
+                self.teachers[tid]["charge"],
+                self.teachers[tid]["vacation"],
+                self.teachers[tid]["COURS"],
+                self.teachers[tid]["TD"],
+                self.teachers[tid]["TP"],
+                self.teachers[tid]["seance"],        
+                )
+        text += u"""\n</table>"""
+        return text            
 
-    def display_html(self):
+    def display_html(self, stylefile = ""):
         """
         """
         #~ teachers    = read_teachers(xmldoc)
@@ -663,6 +694,22 @@ class openclassModel:
         #~ classrooms  = read_classrooms(xmldoc)
         #~ teachers, classrooms, groups, courses  = read_slots(xmldoc,  courses, teachers, classrooms, groups)
         teachers = self.calcul_charge_teachers()
+        if stylefile:
+            stylefile_path = os.path.join(os.path.dirname(__file__), stylefile)
+        else:
+            stylefile_path = os.path.join(os.path.dirname(__file__), "css/style.css")
+        try:
+            stylesheetfile = open(stylefile_path, "r")
+        except:
+            print("can't open style sheet %s"%stylefile_path)
+            stylesheetfile = False
+        
+        if stylesheetfile:
+            stylesheet = stylesheetfile.read()
+        else:
+            stylesheet = ""
+            
+        
         html = """<!DOCTYPE html>
 <html>
 <head>
@@ -670,69 +717,11 @@ class openclassModel:
 <!--<link rel="stylesheet" href="style.css">-->
 <title>Emploi de Temps</title>
 <style  type='text/css'>
-td {text-align:center;
-}
-.day {width: 15%;}
-.term {width: 5%;}
-.TD {
-background-color:#69E4E4;
-}
-.TP {
-background-color:#73F0BE;
-}
-.Cours {
-background-color:#FBFFCA;
-}
-.unvailable {
-background-color:#C9D0CE;
-color:#C9D0CE;
-}
-.course {
-    display:inline;
-}
-.teacher_name {
-    display:inline;
-}
-.classroom_name {
-        display:block;
-
-}
-
-h2{
-    page-break-before: always;
-  font-size: 30px;
-  color: #000;
-  text-transform: uppercase;
-  font-weight: 300;
-  text-align: center;
-  margin-bottom: 20px;
-}
-table{
-  width:90%;
-  table-layout: fixed;
-}
-th{
-  padding: 5px 5px;
-  text-align: center;
-  font-weight: 500;
-  font-size: 16px;
-  background-color: #BCF8EF;
-  text-transform: uppercase;
-}
-td{
-  padding: 5px;
-  text-align: center;
-  vertical-align:middle;
-  font-weight: 300;
-  font-size: 14px;
-  color: #000;
-  border-bottom: solid 1px rgba(255,255,255,0.1);
-}
-
+%s
 </style>
 </head>
 <body>
-"""
+"""%stylesheet
         
         print html.encode('utf8')
 
@@ -765,6 +754,14 @@ td{
         
         print "<br/><a name='freerooms'></a>"
         html = self.display_free_classroom()
+        print html.encode('utf8')
+        print "<br/><a name='freerooms'></a>"
+        html = self.display_free_classroom("tp")
+        print html.encode('utf8')
+        print "<br/><a name='freerooms'></a>"
+        html = self.display_free_classroom("salle")
+        print "<br/><a name='freerooms'></a>"
+        html = self.display_free_classroom("salle",occupation = True)
         print html.encode('utf8')
         print "<br/><a href='#sommaire'>TOP</a>"    
         
@@ -818,8 +815,8 @@ def main():
     except:
         print "Can't Open the file", DATA_FILE
         sys.exit()
-    parser = openclassModel()
-    parser.display_html (xmldoc)
+    parser = html_displayer(DATA_FILE)
+    parser.display_html ()
 
 if __name__ == '__main__':
     main()
