@@ -1,3 +1,17 @@
+@media print{
+  body{ 
+  background-color:#FFFFFF; background-image:none; 
+  color:#000000;
+   }
+/*
+  #ad{ display:none;}
+  #leftbar{ display:none;}
+  #contentarea{ width:100%;}
+*/
+    .TD { background-color:#69E4E4; }
+    .TP { background-color:#73F0BE; }
+    .Cours { background-color:#FBFFCA;}
+}
 td{
   padding-left: 2px;
   padding-right: 2px;
