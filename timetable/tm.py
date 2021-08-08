@@ -537,6 +537,21 @@ class openclassModel:
 class html_displayer(openclassModel):
     def __init__(self, filename = None ):
         openclassModel.__init__(self, filename)
+        self.commands = ['timetables_groups',
+        'timetables_teachers',
+        'timetables_rooms',
+        'freerooms', 
+        'freerooms_tp',
+        'freerooms_salle',
+        'freerooms_control',
+        'availableteachers',
+        'availableteachers_vac',
+        'availableteachers_details',    
+        'availableteachers_tp',
+        'availableteachers_cours',
+        'charges',
+        'affectation'
+        ]
     def display_timetable(self, time_table, field1, field2, occupation=False):
         """
         display a time table
