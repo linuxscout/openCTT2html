@@ -824,16 +824,6 @@ class html_displayer(openclassModel):
         """
         if all_commands:
             return self.display_html()
-        # else use commands
-        # ~ if command == "test":
-            # ~ return "HTML"
-        # ~ elif command == "freerooms":
-            # ~ return "Free Rooms"
-        # ~ elif command == "charge":
-            # ~ return "Charge"
-        # ~ else:
-            # ~ return "groups"
-
         if command == 'timetables_groups':
             return  self.display_slot_by_group()
         elif command == 'timetables_teachers':

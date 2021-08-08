@@ -90,19 +90,6 @@ def grabargs():
 
     #if text: print text.encode('utf8');
     return (fname, options)
-def action(command):
-    """
-    Run an action
-    """
-    if command == "test":
-        return "HTML"
-    elif command == "freerooms":
-        return "Free Rooms"
-    elif command == "charge":
-        return "Charge"
-    else:
-        return "groups"
-    
                 
 def main():
     
