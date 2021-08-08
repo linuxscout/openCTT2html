@@ -41,16 +41,16 @@ scriptversion = '0.1'
 AuthorName="Taha Zerrouki"
 def usage():
 # "Display usage options"
-    print "(C) CopyLeft 2012, %s"%AuthorName
-    print "Usage: %s -f filename [OPTIONS]" % scriptname
-    print (u"       %s 'السلام عليكم' [OPTIONS]\n" % scriptname).encode('utf8');
+    print("(C) CopyLeft 2012, %s"%AuthorName)
+    print("Usage: %s -f filename [OPTIONS]" % scriptname)
+    print(u"       %s 'السلام عليكم' [OPTIONS]\n" % scriptname);
 #"Display usage options"
-    print "\t[-f | --file= filename]input file to %s"%scriptname
-    print "\t[-h | --help]     outputs this usage message"
-    print "\t[-v | --version]  program version"
-    print "\t[-l | --limit]    treat only a limited number of line"
-    print "\t[-t | --stat]     enable statistics display"
-    print "\r\nThis program is licensed under the GPL License\n"
+    print("\t[-f | --file= filename]input file to %s"%scriptname)
+    print("\t[-h | --help]     outputs this usage message")
+    print("\t[-v | --version]  program version")
+    print("\t[-l | --limit]    treat only a limited number of line")
+    print("\t[-t | --stat]     enable statistics display")
+    print("\r\nThis program is licensed under the GPL License\n")
 
 def grabargs():
 #  "Grab command-line arguments"
@@ -72,7 +72,7 @@ def grabargs():
             usage()
             sys.exit(0)
         if o in ("-V", "--version"):
-            print scriptversion
+            print(scriptversion)
             sys.exit(0)
         if o in ("-t", "--stat"):
             options['stat'] = True;
@@ -84,13 +84,26 @@ def grabargs():
             fname = val
     utfargs=[]
     for a in args:
-        utfargs.append( a.decode('utf8'));
+        # ~ utfargs.append( a.decode('utf8'));
+        utfargs.append( a);
     text= u' '.join(utfargs);
 
     #if text: print text.encode('utf8');
     return (fname, options)
-
+def action(command):
+    """
+    Run an action
+    """
+    if command == "test":
+        return "HTML"
+    elif command == "freerooms":
+        return "Free Rooms"
+    elif command == "charge":
+        return "Charge"
+    else:
+        return "groups"
     
+                
 def main():
     
     filename, options = grabargs()
@@ -98,7 +111,7 @@ def main():
     try:
         xmldoc = minidom.parse(filename)
     except:
-        print "Can't Open the file", filename
+        print( "Can't Open the file", filename)
         sys.exit()
     # test add course
     given_group_name = "1MI 01"
@@ -117,8 +130,14 @@ def main():
     parser = tm.html_displayer(filename)
     xmldoc = parser.add_course(table_course, given_group_name)
     # test add courses
-    #print xmldoc.toxml().encode('utf8')
-    parser.display_html()
+
+    commands = ["freerooms", "charge", "groups"]
+    result = ""
+    for cmd  in commands:
+        result += "\n"+ parser.action(cmd)
+    # ~ print(parser.display_html())
+    # ~ result = parser.action(cmd, True)    
+    print(result)
 
 
 if __name__ == '__main__':

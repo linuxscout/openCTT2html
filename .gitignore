@@ -99,6 +99,7 @@ ENV/
 
 # mypy
 .mypy_cache/
-/data/Emploi_Temps_17_18_s1-v2.8.oct
-/data/Emploi_S2_16_17_v2.oct
-/data/Emploi_Temps_17_18_s1.oct
+/data/*.oct
+output/
+dev3/
+/data/caneva-m2.xlsx

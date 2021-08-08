@@ -77,7 +77,7 @@ class openclassModel:
         try:
             xmldoc = minidom.parse(filename)
         except:
-            print "Can't Open the file", DATA_FILE
+            print("Can't Open the file", DATA_FILE)
             sys.exit()
         self.xmldoc = xmldoc
         selfteachers    = self.read_teachers()
@@ -181,7 +181,10 @@ class openclassModel:
             else:
                 classrooms_table[cid]['type'] = "salle"
             #un allowed slot
-            spec_type= classroom.getElementsByTagName('spec_slots')[0].getAttribute("type")
+            try:
+                spec_type= classroom.getElementsByTagName('spec_slots')[0].getAttribute("type")
+            except:
+                spec_type = ""
             if spec_type.lower() == "allowed":
                 classrooms_table[cid]["timetable"] = copy.deepcopy(TIMETABLE_TEMPLATE_FORBIDDEN)
             slots = classroom.getElementsByTagName('spec_slot')
@@ -278,7 +281,7 @@ class openclassModel:
         self.courses_assignation = []
         header = """Courses Assignation -22"""
 
-        for key, course in courses.iteritems():
+        for key, course in courses.items():
             # get teacher info
             #~ if not teacher_dept or teachers[course['teacher_id']]['extid'] == teacher_dept:
             tech = teachers[course['teacher_id']]['name'] + " " + teachers[course['teacher_id']]['last_name']
@@ -295,7 +298,7 @@ class openclassModel:
         """ Calculate the teacher charge """
         courses = self.courses
         teachers = self.teachers
-        for key, course in courses.iteritems():
+        for key, course in courses.items():
             #~ course = courses[key]
             # get teacher info
             tid = course['teacher_id']
@@ -722,45 +725,44 @@ class html_displayer(openclassModel):
 </head>
 <body>
 """%stylesheet
-        
-        print html.encode('utf8')
+        toprint_text = html#.encode('utf8')
 
-        print "<h1><a name='sommaire'>Sommaire</a> </h2>"
-        print "<ul>"
-        print "<li><a href='#%s'>%s</a></li>"%("groups", "Par groupe")
-        print "<li><a href='#%s'>%s</a></li>"%("teachers", "Par Enseignant")
-        print "<li><a href='#%s'>%s</a></li>"%("classrooms", "Salles")
-        print "<li><a href='#%s'>%s</a></li>"%("freerooms", "Salles Libres")
-        print "<li><a href='#%s'>%s</a></li>"%("availableteachers", "Enseignants Disponibles")
-        print "<li><a href='#%s'>%s</a></li>"%("charges", "Charges")
-        print "<li><a href='#%s'>%s</a></li>"%("affectation", "Affectation")
-        print "</ul>"
-        print "<br/><a name='groups'>Groups</a>"
+        toprint_text += "<h1><a name='sommaire'>Sommaire</a> </h2>"
+        toprint_text += "<ul>"
+        toprint_text += "<li><a href='#%s'>%s</a></li>"%("groups", "Par groupe")
+        toprint_text += "<li><a href='#%s'>%s</a></li>"%("teachers", "Par Enseignant")
+        toprint_text += "<li><a href='#%s'>%s</a></li>"%("classrooms", "Salles")
+        toprint_text += "<li><a href='#%s'>%s</a></li>"%("freerooms", "Salles Libres")
+        toprint_text += "<li><a href='#%s'>%s</a></li>"%("availableteachers", "Enseignants Disponibles")
+        toprint_text += "<li><a href='#%s'>%s</a></li>"%("charges", "Charges")
+        toprint_text += "<li><a href='#%s'>%s</a></li>"%("affectation", "Affectation")
+        toprint_text += "</ul>"
+        toprint_text += "<br/><a name='groups'>Groups</a>"
         html = self.display_slot_by_group()
-        print html.encode('utf8')
-        print "<br/><a href='#sommaire'>TOP</a>"
+        toprint_text += html#.encode('utf8')
+        toprint_text += "<br/><a href='#sommaire'>TOP</a>"
         
         
-        print "<br/><a name='teachers'></a>"
+        toprint_text += "<br/><a name='teachers'></a>"
         html = self.display_slot_by_teacher()
-        print html.encode('utf8')
-        print "<br/><a href='#sommaire'>TOP</a>"
+        toprint_text += html#.encode('utf8')
+        toprint_text += "<br/><a href='#sommaire'>TOP</a>"
         
-        print "<br/><a name='classrooms'></a>"
+        toprint_text += "<br/><a name='classrooms'></a>"
         #~ html = display_slot_by_classroom(classrooms, occupation=True)
         html = self.display_slot_by_classroom()
-        print html.encode('utf8')
-        print "<br/><a href='#sommaire'>TOP</a>"
+        toprint_text += html#.encode('utf8')
+        toprint_text += "<br/><a href='#sommaire'>TOP</a>"
         
-        print "<br/><a name='freerooms'></a>"
+        toprint_text += "<br/><a name='freerooms'></a>"
         html = self.display_free_classroom()
-        print html.encode('utf8')
-        print "<br/><a name='freerooms'></a>"
+        toprint_text += html#.encode('utf8')
+        toprint_text += "<br/><a name='freerooms'></a>"
         html = self.display_free_classroom("tp")
-        print html.encode('utf8')
-        print "<br/><a name='freerooms'></a>"
+        toprint_text += html#.encode('utf8')
+        toprint_text += "<br/><a name='freerooms'></a>"
         html = self.display_free_classroom("salle")
-        print "<br/><a name='freerooms'></a>"
+        toprint_text += "<br/><a name='freerooms'></a>"
         rooms_to_control = [
             "Salle 36",
             "Salle-p 41",
@@ -769,61 +771,131 @@ class html_displayer(openclassModel):
     "Salle-p 47*",
         ]
         html = self.display_free_classroom("salle",occupation = True, classrooms_to_control = rooms_to_control )
-        print html.encode('utf8')
-        print "<br/><a href='#sommaire'>TOP</a>"    
+        toprint_text += html#.encode('utf8')
+        toprint_text += "<br/><a href='#sommaire'>TOP</a>"    
         
         #~ html = self.display_global_courses()
-        #~ print html.encode('utf8')
+        #~ toprint_text += html#.encode('utf8')
         
             
-        print "<br/><a name='availableteachers'></a>"
+        toprint_text += "<br/><a name='availableteachers'></a>"
         html = self.display_availaible_teachers(teacher_dept="info")
-        print html.encode('utf8')
-        print "<br/><a href='#sommaire'>TOP</a>"    
+        toprint_text += html#.encode('utf8')
+        toprint_text += "<br/><a href='#sommaire'>TOP</a>"    
         
         html = self.display_availaible_teachers(teacher_type ="vac",teacher_dept="info")
-        print html.encode('utf8')
-        print "<br/><a href='#sommaire'>TOP</a>"    
+        toprint_text += html#.encode('utf8')
+        toprint_text += "<br/><a href='#sommaire'>TOP</a>"    
         
         html = self.display_availaible_teachers(detailled =True,teacher_dept="info")
-        print html.encode('utf8')
-        print "<br/><a href='#sommaire'>TOP</a>"    
+        toprint_text += html#.encode('utf8')
+        toprint_text += "<br/><a href='#sommaire'>TOP</a>"    
         
         html = self.display_availaible_teachers(teacher_dept="info", course_type ="TP", detailled =True)
-        print html.encode('utf8')
-        print "<br/><a href='#sommaire'>TOP</a>"    
+        toprint_text += html#.encode('utf8')
+        toprint_text += "<br/><a href='#sommaire'>TOP</a>"    
         
         html = self.display_availaible_teachers(teacher_dept="info", course_type ="COURS", detailled =True)
-        print html.encode('utf8')
-        print "<br/><a href='#sommaire'>TOP</a>"   
+        toprint_text += html#.encode('utf8')
+        toprint_text += "<br/><a href='#sommaire'>TOP</a>"   
         
-        print "<br/><a name='charges'></a>" 
+        toprint_text += "<br/><a name='charges'></a>" 
         html = self.display_charge_teachers_html( teacher_dept ="info")
-        print html.encode('utf8')
-        print "<br/><a href='#sommaire'>TOP</a>"    
+        toprint_text += html#.encode('utf8')
+        toprint_text += "<br/><a href='#sommaire'>TOP</a>"    
 
         #~ html = display_charge_teachers (teachers, teacher_dept ="info")
-        #~ print html.encode('utf8')
-        #~ print "<br/><a href='#sommaire'>TOP</a>"    
+        #~ toprint_text += html#.encode('utf8')
+        #~ toprint_text += "<br/><a href='#sommaire'>TOP</a>"    
         
-        print "<br/><a name='affectation'></a>" 
+        toprint_text += "<br/><a name='affectation'></a>" 
         html = self.display_courses_teachers ( teacher_dept ="info")
-        print html.encode('utf8')
-        print "<br/><a href='#sommaire'>TOP</a>"
+        toprint_text += html#.encode('utf8')
+        toprint_text += "<br/><a href='#sommaire'>TOP</a>"
 
-        print "</body></html>"
+        toprint_text += "</body></html>"
         
-      
+        return toprint_text;
+
+
+    def action(self, command, all_commands=False):
+        """
+        Run an action
+        """
+        if all_commands:
+            return self.display_html()
+        # else use commands
+        # ~ if command == "test":
+            # ~ return "HTML"
+        # ~ elif command == "freerooms":
+            # ~ return "Free Rooms"
+        # ~ elif command == "charge":
+            # ~ return "Charge"
+        # ~ else:
+            # ~ return "groups"
+
+        if command == 'timetables_groups':
+            return  self.display_slot_by_group()
+        elif command == 'timetables_teachers':
+            self.calcul_charge_teachers()            
+            return  self.display_slot_by_teacher()
+
+        elif command == 'timetables_rooms':
+
+            return  self.display_slot_by_classroom()
+
+        elif command == 'freerooms': 
+            return  self.display_free_classroom()
+
+        elif command == 'freerooms_tp':
+            return  self.display_free_classroom("tp")
+
+        elif command == 'freerooms_salle':
+            return  self.display_free_classroom("salle")
+        elif command == 'freerooms_control':
+            rooms_to_control = [
+            "Salle 36",
+            "Salle-p 41",
+            "Salle-p 43",
+            "Salle-p 46",
+            "Salle-p 47*",
+            ]
+            return  self.display_free_classroom("salle",occupation = True, classrooms_to_control = rooms_to_control )
+
+
+        elif command == 'availableteachers':
+            return  self.display_availaible_teachers(teacher_dept="info")
+        elif command == 'availableteachers_vac':
+            return  self.display_availaible_teachers(teacher_type ="vac",teacher_dept="info")
+        elif command == 'availableteachers_details':    
+            return  self.display_availaible_teachers(detailled =True,teacher_dept="info")
+        elif command == 'availableteachers_tp':
+            return  self.display_availaible_teachers(teacher_dept="info", course_type ="TP", detailled =True)
+        elif command == 'availableteachers_cours':
+            return  self.display_availaible_teachers(teacher_dept="info", course_type ="COURS", detailled =True)
+
+        elif command == 'charges':
+            self.calcul_charge_teachers()
+            return  self.display_charge_teachers_html( teacher_dept ="info")
+
+        elif command == 'affectation':
+            self.calcul_charge_teachers()            
+            return  self.display_courses_teachers ( teacher_dept ="info")
+        else:
+            return "Nothing for '%s'"%command
+
+            
+        
 def main():
     DATA_FILE = "../data/tm18.oct"
     try:
         # o
         xmldoc = minidom.parse(DATA_FILE)
     except:
-        print "Can't Open the file", DATA_FILE
+        print("Can't Open the file", DATA_FILE)
         sys.exit()
     parser = html_displayer(DATA_FILE)
-    parser.display_html ()
+    print(parser.display_html ())
 
 if __name__ == '__main__':
     main()
