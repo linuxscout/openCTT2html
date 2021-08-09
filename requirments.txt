@@ -1,0 +1,2 @@
+pywebview>=3.5
+tkhtmlview>=0.1.0
