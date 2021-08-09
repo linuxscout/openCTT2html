@@ -15,3 +15,5 @@ run:
 	python3 timetable_webviewer.py
 gui:
 	python3 timetablegui.py 
+exe:
+	pyinstaller timetable_webviewer.spec
