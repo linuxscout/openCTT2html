@@ -30,7 +30,7 @@ class mywebviewer:
         self.filename = filenames[0]
         self.parser = tm.html_displayer(self.filename)
         window.load_url("resources/html/main.html")
-        window.toggle_fullscreen()
+        # ~ window.toggle_fullscreen()
         # ~ result = self.update("default")
 
         # ~ window.load_html(result)
