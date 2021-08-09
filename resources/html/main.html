@@ -86,10 +86,10 @@ td{
 </style>
 </head>
 <body>
-
-
 <h1>Time Table</h1>
+<!--
 <p id='pywebview-status'><i>pywebview</i> is not ready</p>
+-->
 <!--
 
 <button onClick="initialize()">Hello</button><br/>
@@ -100,6 +100,21 @@ td{
 <label for="name_input">Say hello to:</label>
 <input id="name_input" placeholder="put a name here">
 -->
+
+<button onClick="submit_action('timetables_groups')">timetables_groups</button>
+<button onClick="submit_action('timetables_teachers')">timetables_teachers</button>
+<button onClick="submit_action('timetables_rooms')">timetables_rooms</button>
+<button onClick="submit_action('freerooms')">freerooms</button>
+<button onClick="submit_action('freerooms_tp')">freerooms_tp</button>
+<button onClick="submit_action('freerooms_salle')">freerooms_salle</button>
+<button onClick="submit_action('freerooms_control')">freerooms_control</button><br/>
+<button onClick="submit_action('availableteachers')">availableteachers</button>
+<button onClick="submit_action('availableteachers_vac')">availableteachers_vac</button>
+<button onClick="submit_action('availableteachers_details')">availableteachers_details</button>
+<button onClick="submit_action('availableteachers_tp')">availableteachers_tp</button>
+<button onClick="submit_action('availableteachers_cours')">availableteachers_cours</button><br/>
+<button onClick="submit_action('charges')">charges</button>
+<button onClick="submit_action('affectation')">affectation</button><br/>
 <label for="command">Select an action here</label>   
     <select id="command" placeholder="Select an action here">
     <option value="timetables_groups">timetables_groups</option>
@@ -117,24 +132,7 @@ td{
     <option value="charges">charges</option>
     <option value="affectation">affectation</option>
     </select>
-
 <button onClick="submit()">Submit</button><br/>
-<button onClick="submit_action('timetables_groups')">timetables_groups</button>
-<button onClick="submit_action('timetables_teachers')">timetables_teachers</button>
-<button onClick="submit_action('timetables_rooms')">timetables_rooms</button>
-<button onClick="submit_action('freerooms')">freerooms</button>
-<button onClick="submit_action('freerooms_tp')">freerooms_tp</button>
-<button onClick="submit_action('freerooms_salle')">freerooms_salle</button>
-<button onClick="submit_action('freerooms_control')">freerooms_control</button><br/>
-<button onClick="submit_action('availableteachers')">availableteachers</button>
-<button onClick="submit_action('availableteachers_vac')">availableteachers_vac</button>
-<button onClick="submit_action('availableteachers_details')">availableteachers_details</button>
-<button onClick="submit_action('availableteachers_tp')">availableteachers_tp</button>
-<button onClick="submit_action('availableteachers_cours')">availableteachers_cours</button><br/>
-<button onClick="submit_action('charges')">charges</button>
-<button onClick="submit_action('affectation')">affectation</button>
-
-
 
 <div id="response-container"></div>
 <script>
