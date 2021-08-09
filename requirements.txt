@@ -1,2 +1,4 @@
 pywebview>=3.5
-tkhtmlview>=0.1.0
+tkhtmlview>=0.1.0.post1
+requests
+pillow>=5.3.0
