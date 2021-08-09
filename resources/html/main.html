@@ -101,6 +101,8 @@ td{
 <input id="name_input" placeholder="put a name here">
 -->
 
+<button onClick="copy()">Copy</button>
+<button onClick="clear_result()">Clear</button>
 <button onClick="submit_action('timetables_groups')">timetables_groups</button>
 <button onClick="submit_action('timetables_teachers')">timetables_teachers</button>
 <button onClick="submit_action('timetables_rooms')">timetables_rooms</button>
@@ -145,6 +147,16 @@ td{
         var container = document.getElementById('response-container')
 
         container.innerHTML = response.message
+        container.style.display = 'block'
+    }
+    function clear_result() {
+        var container = document.getElementById('response-container')
+        container.innerHTML = "tAHA"
+        container.style.display = 'block'
+    }
+    function copy() {
+        var container = document.getElementById('response-container')
+        container.innerHTML = "tAHA"
         container.style.display = 'block'
     }
 
